@@ -17,13 +17,13 @@ IsolatedStorage is a per-extension, per-tenant key-value store. DataScope::Modul
 
 ## Best Practice
 
-Use IsolatedStorage.SetEncrypted to write secrets, IsolatedStorage.Contains to probe, and IsolatedStorage.Get into a SecretText destination to read. Choose DataScope::Company for per-company credentials (for example, a tenant-per-company service account) and DataScope::Module for extension-wide configuration.
+Use IsolatedStorage.SetEncrypted to write secrets, IsolatedStorage.Contains to probe, and IsolatedStorage.Get into a SecretText destination to read. Choose DataScope::Company for per-company credentials (for example, a tenant-per-company service account) and DataScope::Module for extension-wide configuration. Procedures that call IsolatedStorage.Get, Set, SetEncrypted, Contains, or Delete must be `local` or `internal`; a public wrapper lets other extensions call into your storage boundary.
 
 See sample: `use-isolated-storage-for-module-and-company-secrets.good.al`.
 
 ## Anti Pattern
 
-Storing secrets in a Setup table column as plain Text, or using IsolatedStorage.Set (unencrypted) for values that authenticate the extension to an external service. Both shapes leave the secret readable by anyone with read rights on the underlying storage.
+Storing secrets in a Setup table column as plain Text, using IsolatedStorage.Set (unencrypted) for values that authenticate the extension to an external service, or exposing a public Get/Set procedure around IsolatedStorage. The first two leave secrets readable; the public wrapper lets another extension exfiltrate or overwrite values through your codeunit.
 
 See sample: `use-isolated-storage-for-module-and-company-secrets.bad.al`.
 

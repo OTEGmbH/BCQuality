@@ -2,7 +2,8 @@ codeunit 51204 "Perf Sample LockTable Good"
 {
     procedure GetOrCreate(var AgentStatus: Record "Integer"): Boolean
     begin
-        // Read path: no lock.
+        // Read path: consistent read on this record instance only.
+        AgentStatus.ReadIsolation := IsolationLevel::ReadCommitted;
         if AgentStatus.Get(1) then
             exit(true);
 

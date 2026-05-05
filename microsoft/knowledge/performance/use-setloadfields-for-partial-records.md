@@ -15,7 +15,7 @@ SetLoadFields instructs the platform to hydrate only the listed fields on a reco
 
 ## Best Practice
 
-Call SetLoadFields before FindSet, FindFirst, or Get whenever the code path only reads a subset of fields. List every field that is read or written during the operation, including fields used in calculations and downstream function calls. Omitting a field that is later accessed triggers a second round-trip.
+Call SetLoadFields before FindSet, FindFirst, or Get when the table is wide enough to matter (roughly 10+ fields) and the code path reads a small subset (roughly under 60%) across a material number of rows. Short loops over narrow tables usually do not earn the extra coupling; see `skip-setloadfields-on-narrow-tables-and-short-loops` for that exception. List every field that is read or written during the operation, including fields used in calculations and downstream function calls. Omitting a field that is later accessed triggers a second round-trip.
 
 Fields that appear **only** in SetRange or SetFilter calls do not need to be included — the database resolves the filter using the index without hydrating the value into AL memory. Including filter-only fields wastes bandwidth and is not required.
 

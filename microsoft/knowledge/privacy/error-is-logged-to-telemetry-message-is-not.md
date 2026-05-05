@@ -15,12 +15,12 @@ The privacy concern with user-facing text is not what the authenticated user see
 
 ## Best Practice
 
-Free-text business content — customer names, email addresses, document numbers — is acceptable in Message, Confirm, and Notification. Treat Error text as if it will be read by telemetry consumers, because it will be. Use localized Labels with the fewest possible PII placeholders, or system identifiers (SystemId, primary key values) rather than personal data.
+Free-text business content — customer names, email addresses, document numbers — is acceptable in Message, Confirm, and Notification. Treat Error text as if it will be read by telemetry consumers, because it will be, but use direct Error substitution rather than pre-building the message. `Error(MyErr, EmailAddress)` is telemetry-safe; `Error(StrSubstNo(..., EmailAddress))` is not.
 
 See sample: `error-is-logged-to-telemetry-message-is-not.good.al`.
 
 ## Anti Pattern
 
-Embedding customer emails, phone numbers, addresses, or names directly into Error strings — either as literals or via pre-built StrSubstNo output — because "the user will see this anyway." The user also sees Message and Confirm, but those are not logged. Error is.
+Embedding customer emails, phone numbers, addresses, or names as literals in an Error label or baking them into a Text value with StrSubstNo before calling Error. The user also sees Message and Confirm, but those are not logged. Error is logged, so dynamic customer data must stay as direct substitution arguments.
 
 See sample: `error-is-logged-to-telemetry-message-is-not.bad.al`.

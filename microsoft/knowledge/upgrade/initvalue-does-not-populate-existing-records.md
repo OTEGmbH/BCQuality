@@ -15,7 +15,7 @@ The `InitValue` property sets a field's default for rows created after the field
 
 ## Best Practice
 
-When adding a field to an existing table with a meaningful default, write an upgrade step that populates existing rows with the same value, guarded by its own upgrade tag. Use `DataTransfer` with `AddConstantValue` for set-based initialization (see `use-datatransfer-for-large-dataset-initialization`). Exceptions: brand-new tables, new Boolean fields where `false` is the correct value for existing rows, and informational fields where empty is an acceptable state.
+When adding a field to an existing table with a meaningful default, write an upgrade step that populates existing rows with the same value, guarded by its own upgrade tag. Use `DataTransfer` with `AddConstantValue` for set-based initialization (see `use-datatransfer-for-large-dataset-initialization`). Exceptions: brand-new tables; new Boolean fields without InitValue where `false` is the intended existing-row value; new extensions, new feature tables, or setup tables with no meaningful existing data to migrate; and informational fields where empty is an acceptable state.
 
 See sample: `initvalue-does-not-populate-existing-records.good.al`.
 

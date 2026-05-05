@@ -38,8 +38,8 @@ Discard files that are not applicable. Retain conditionally applicable files (an
 Narrow the relevant files to the subset that applies to the changes under review. For each relevant file, compute overlap against:
 
 - The changed AL object names and types — especially codeunits with `Subtype = Upgrade` or `Subtype = Install`, tables and tableextensions adding or changing fields, enums and enumextensions, and objects under `Hybrid*`/`Migration`/`Upgrade` namespaces.
-- The changed triggers and procedures, weighted toward `OnUpgradePerCompany`, `OnUpgradePerDatabase`, `OnInstallAppPerCompany`, and the `OnGetPerCompanyUpgradeTags`/`OnGetPerDatabaseUpgradeTags` subscribers.
-- Tokens extracted from the diff that relate to upgrade concerns (`Subtype = Upgrade`, `Upgrade Tag`, `HasUpgradeTag`, `SetUpgradeTag`, `DataTransfer`, `InitValue`, `ObsoleteState`, `ObsoleteReason`, `ObsoleteTag`, `DataVersion`, `ExecutionContext`, `value(`, `enum`, `enumextension`).
+- The changed triggers and procedures, weighted toward `OnUpgradePerCompany`, `OnUpgradePerDatabase`, `OnValidateUpgradePerCompany`, `OnValidateUpgradePerDatabase`, `OnInstallAppPerCompany`, and the `OnGetPerCompanyUpgradeTags`/`OnGetPerDatabaseUpgradeTags` subscribers.
+- Tokens extracted from the diff that relate to upgrade concerns (`Subtype = Upgrade`, `Upgrade Tag`, `HasUpgradeTag`, `SetUpgradeTag`, `OnValidateUpgrade`, `DataTransfer`, `CopyFields`, `InitValue`, `ObsoleteState`, `ObsoleteReason`, `ObsoleteTag`, `DataVersion`, `ExecutionContext`, `PrimaryKey`, `key(`, `field(`, `value(`, `enum`, `enumextension`, `HybridSL`, `HybridGP`, `HybridBC`, `HybridBaseDeployment`).
 
 A file enters the candidate worklist when its `keywords` intersect the extracted tokens or its topic matches a changed object type. When the diff contains no upgrade-related changes by any of the above signals, return `outcome: "not-applicable"` without evaluating files.
 

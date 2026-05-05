@@ -17,13 +17,13 @@ Events in AL are extensibility contracts. Every subscriber — third-party, inte
 
 ## Best Practice
 
-Design event signatures to carry only the data a subscriber legitimately needs. Do not pass SecretText, credential material, or flags the publisher depends on for access control. If a subscriber needs to veto an action, model it as a separate OnBefore event whose Handled pattern is documented — not as a general-purpose var Boolean callers can flip.
+Design event signatures to carry only the data a subscriber legitimately needs. Do not pass SecretText, credential material, or flags the publisher depends on for access control. Guard variables such as `HasAccess`, `SkipValidation`, or `CanExport` must not be `var` parameters on an OnBefore event; notify subscribers after the internal check with value parameters they cannot mutate.
 
 See sample: `do-not-expose-sensitive-data-in-event-publishers.good.al`.
 
 ## Anti Pattern
 
-An OnBeforeElevateAccess publisher that exposes `var CanAccess: Boolean` — any subscriber installed on the tenant can flip it to true and escalate. Or a publisher that passes a SecretText parameter it obtained internally, handing it to every subscriber.
+An OnBeforeElevateAccess publisher that exposes `var CanAccess: Boolean` or `var SkipValidation: Boolean` — any subscriber installed on the tenant can flip it to true and bypass the check. Or a publisher that passes a SecretText parameter it obtained internally, handing it to every subscriber.
 
 See sample: `do-not-expose-sensitive-data-in-event-publishers.bad.al`.
 

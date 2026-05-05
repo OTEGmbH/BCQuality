@@ -15,7 +15,7 @@ The upgrade scope has to complete for the tenant to reach the new version. Any c
 
 ## Best Practice
 
-Defer external calls to runtime code that executes after the upgrade — install-triggered tasks, background job queue entries scheduled by the upgrade, or lazy initialization on first use. The upgrade step should compute a local result or mark work to be done, not perform the remote call itself.
+Defer external calls to runtime code that executes after the upgrade — install-triggered tasks, background job queue entries scheduled by the upgrade, or lazy initialization on first use. The upgrade step should compute a local result or mark work to be done, not perform the remote call itself. Do not apply this rule to ordinary runtime codeunits, pages, tables, install procedures, or background jobs unless they are directly invoked from an upgrade trigger.
 
 ## Anti Pattern
 

@@ -15,12 +15,12 @@ An upgrade tag set via `UpgradeTag.SetUpgradeTag` only participates in the platf
 
 ## Best Practice
 
-For every upgrade-tag constant referenced in `HasUpgradeTag`/`SetUpgradeTag`, register it in the subscriber that matches its trigger scope: tags used from `OnUpgradePerCompany` go in `OnGetPerCompanyUpgradeTags`; tags used from `OnUpgradePerDatabase` go in `OnGetPerDatabaseUpgradeTags`. Keep the tag string in a single source (Label or function) and reference it at the guard, the setter, and the registration.
+For every upgrade-tag constant referenced in `HasUpgradeTag`/`SetUpgradeTag`, register it in the subscriber that matches its trigger scope: tags used from `OnUpgradePerCompany` go in `OnGetPerCompanyUpgradeTags`; tags used from `OnUpgradePerDatabase` go in `OnGetPerDatabaseUpgradeTags`. Treat this mapping as a review point, not just a naming convention. Keep the tag string in a single source (Label or function) and reference it at the guard, the setter, and the registration.
 
 See sample: `register-upgrade-tags-with-subscribers.good.al`.
 
 ## Anti Pattern
 
-Adding a new `UpgradeTag.SetUpgradeTag(MyTag())` without the matching `PerCompanyUpgradeTags.Add(MyTag())` in the registration subscriber. The code compiles and the step completes, but the tag is unregistered and the infrastructure is partially disabled.
+Adding a new `UpgradeTag.SetUpgradeTag(MyTag())` without the matching `PerCompanyUpgradeTags.Add(MyTag())` in the registration subscriber, or registering a tag used from `OnUpgradePerCompany` in `OnGetPerDatabaseUpgradeTags`. The code compiles and the step completes, but the tag is invisible or registered at the wrong scope.
 
 See sample: `register-upgrade-tags-with-subscribers.bad.al`.

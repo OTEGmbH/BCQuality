@@ -35,11 +35,11 @@ Discard files that are not applicable. Retain conditionally applicable files (an
 
 ## Worklist
 
-Narrow the relevant files to the subset that applies to the changes under review. For each relevant file, compute overlap against:
+Narrow the relevant files to the subset that applies to the changes under review. Exclude test codeunits, test libraries, test helper code, files under test/Test/Tests paths, and objects with `Subtype = Test`; test data is synthetic and does not ship to customers. For each relevant file, compute overlap against:
 
-- The changed AL object names and types — especially tables and tableextensions (for `DataClassification` on fields), codeunits that call `Error` or `Session.LogMessage`, codeunits performing outgoing HTTP requests with customer data, and objects reading or writing `IsolatedStorage`.
-- The changed procedures and triggers, weighted toward those that call `Error`, `Session.LogMessage`, `StrSubstNo`, `GetLastErrorText`, `HttpClient.Post`/`Get`, `IsolatedStorage.Set`/`SetEncrypted`/`Get`, or `PrivacyNotice.GetPrivacyNoticeApprovalState`.
-- Tokens extracted from the diff that relate to privacy (`DataClassification`, `CustomerContent`, `EndUserIdentifiableInformation`, `SystemMetadata`, `ToBeClassified`, `PrivacyNotice`, `GetLastErrorText`, `TelemetryScope`).
+- The changed AL object names and types — especially tables and tableextensions (for `DataClassification` on fields), codeunits that call `Error`, `Session.LogMessage`, or `FeatureTelemetry`, codeunits performing outgoing HTTP requests with customer data, migration codeunits, and objects reading or writing `IsolatedStorage`.
+- The changed procedures and triggers, weighted toward those that call `Error`, `Session.LogMessage`, `StrSubstNo`, `GetLastErrorText`, `FeatureTelemetry.LogUsage`/`LogUptake`/`LogError`, `HttpClient.Post`/`Get`, `IsolatedStorage.Set`/`SetEncrypted`/`Get`, or `PrivacyNotice.GetPrivacyNoticeApprovalState`.
+- Tokens extracted from the diff that relate to privacy (`DataClassification`, `CustomerContent`, `EndUserIdentifiableInformation`, `EndUserPseudonymousIdentifiers`, `SystemMetadata`, `ToBeClassified`, `PrivacyNotice`, `GetLastErrorText`, `TelemetryScope`, `FeatureTelemetry`, `CustomDimensions`, `LogUsage`, `LogUptake`, `LogError`, `HybridSL`, `HybridGP`, `HybridBC`).
 
 A file enters the candidate worklist when its `keywords` intersect the extracted tokens or its topic (derived from filename and Description) matches a changed object type.
 

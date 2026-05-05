@@ -17,7 +17,9 @@ Event subscribers run synchronously on the publisher's thread. If a subscriber d
 
 ## Best Practice
 
-Keep subscribers small: guard early with inexpensive checks, defer heavy work to a task queue or a background session, and cache results across invocations when the data is stable.
+Keep subscribers small: guard early with inexpensive checks on the publisher record before doing any database work, defer heavy work to a task queue or a background session, and cache results across invocations when the data is stable. In hot events, a cheap `Type`/`Status`/`IsTemporary` exit before a `Get` or `FindFirst` is often the difference between a rare lookup and an N+1 query across every posted line.
+
+See sample: `keep-event-subscribers-lightweight.good.al`.
 
 ## Anti Pattern
 

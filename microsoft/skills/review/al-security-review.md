@@ -37,9 +37,9 @@ Discard files that are not applicable. Retain conditionally applicable files (an
 
 Narrow the relevant files to the subset that applies to the changes under review. For each relevant file, compute overlap against:
 
-- The changed AL object names and types — especially permission sets, codeunits handling authentication or authorization, objects touching `Isolated Storage`, `OAuth2` flows, web service endpoints, and API pages.
-- The changed procedures and triggers, weighted toward those that call `HttpClient`, write to telemetry, read or write secrets, manipulate record-level security, or bypass the permission model (for example, `Record.WritePermission`, direct table access from a non-owning app).
-- Tokens extracted from the diff that relate to security concerns (`IsolatedStorage`, `OAuth2`, `Secret`, `Password`, `Token`, `HttpClient`, `Permission`, `Session`, `UserSecurityId`, `Commit`).
+- The changed AL object names and types — especially permission sets, codeunits handling authentication or authorization, objects touching `Isolated Storage`, `OAuth2` flows, web service endpoints, API pages, event publishers, and RecordRef helpers.
+- The changed procedures and triggers, weighted toward those that call `HttpClient`, validate or compose URLs, write to telemetry, read or write secrets, unwrap SecretText, manipulate record-level security, expose var Boolean guard parameters, or bypass the permission model (for example, `RecordRef.Open`, `Record.WritePermission`, direct table access from a non-owning app).
+- Tokens extracted from the diff that relate to security concerns (`IsolatedStorage`, `SetEncrypted`, `OAuth2`, `SecretText`, `Unwrap`, `NonDebuggable`, `Password`, `Token`, `HttpClient`, `Uri`, `AreURIsHaveSameHost`, `IsValidURIPattern`, `RecordRef`, `RecordId`, `Open`, `IntegrationEvent`, `SkipValidation`, `HasAccess`, `Permission`, `UserSecurityId`, `Commit`).
 
 A file enters the candidate worklist when its `keywords` intersect the extracted tokens or its topic (derived from filename and Description) matches a changed object type.
 

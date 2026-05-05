@@ -39,7 +39,7 @@ Narrow the relevant files to the subset that applies to the changes under review
 
 - The changed AL object names and types — especially tables, pages with SourceTable bindings, reports, queries, and codeunits performing record iteration.
 - The changed procedures and triggers, weighted toward those that perform loops, Find/FindSet/FindFirst calls, CalcFields, CalcSums, FlowField access, or cross-table navigation.
-- Tokens extracted from the diff that relate to data access (SetRange, SetFilter, SetLoadFields, SetCurrentKey, FindSet, Repeat…Until, CalcFields, CalcSums).
+- Tokens extracted from the diff that relate to data access and hot-path costs (`SetRange`, `SetFilter`, `SetLoadFields`, `SetCurrentKey`, `FindSet`, `ReadIsolation`, `LockTable`, `ModifyAll`, `DeleteAll`, `TextBuilder`, `Dictionary`, `temporary`, `repeat`, `until`, `CalcFields`, `CalcSums`).
 
 A file enters the candidate worklist when its `keywords` intersect the extracted tokens or its topic (derived from filename and Description) matches a changed object type.
 

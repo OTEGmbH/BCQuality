@@ -11,11 +11,11 @@ application-area: [all]
 
 ## Description
 
-Error messages are captured by platform telemetry. When Error receives a format template and field references as substitution arguments (Error('... %1 ...', Customer."No.")), the platform inspects each field's DataClassification and omits sensitive values from telemetry automatically. When the caller pre-builds the message with StrSubstNo and then passes the resulting Text to Error, the platform sees a plain string with no field context and logs the whole thing verbatim — any PII already baked in is exported to telemetry.
+Error messages are captured by platform telemetry. When Error receives a format template and substitution arguments directly (`Error('... %1 ...', Value)`), the platform can classify and strip sensitive values before telemetry is written. This is true whether the arguments are record fields, local variables, function results, or other expressions. When the caller pre-builds the message with StrSubstNo and then passes the resulting Text to Error, the platform sees a plain string with no argument context and logs the whole thing verbatim — any PII already baked in is exported to telemetry.
 
 ## Best Practice
 
-Pass the template and the field references directly to Error. Declare the template as a Label with a Comment describing each placeholder. The platform's field-aware classification logic then takes care of what reaches telemetry.
+Pass the template and substitution arguments directly to Error. Declare the template as a Label with a Comment describing each placeholder. Do not flag direct Error substitution merely because an argument may contain a customer name, email address, or phone number; the platform intercepts those arguments before telemetry.
 
 See sample: `strsubstno-prebuild-breaks-error-telemetry-classification.good.al`.
 

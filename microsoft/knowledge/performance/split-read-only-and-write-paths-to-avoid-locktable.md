@@ -11,11 +11,11 @@ application-area: [all]
 
 ## Description
 
-LockTable takes an exclusive write lock on the affected table for the remainder of the transaction. In a helper that is called from many read-only sites and a few write sites, placing LockTable unconditionally at the top serializes every reader on every other reader's lock — the helper becomes a system-wide contention point. The correct shape is a conditional structure: try the read-only path first, and only fall through to LockTable when the code genuinely needs to modify the table.
+LockTable causes reads against the table to use update locks for the remainder of the transaction. In a helper that is called from many read-only sites and a few write sites, placing LockTable unconditionally at the top serializes every reader on every other reader's lock — the helper becomes a system-wide contention point. The correct shape is a conditional structure: try the read-only path first, and only fall through to LockTable when the code genuinely needs to modify the table.
 
 ## Best Practice
 
-For paths that are read-only, prefer `ReadIsolation` over `LockTable`. Setting `Rec.ReadIsolation := IsolationLevel::ReadCommitted` on a record variable gives fine-grained, per-instance control over the isolation level without taking an update lock on the table for the rest of the transaction. Use `LockTable` only for paths that genuinely write to the table.
+For paths that are read-only, prefer `ReadIsolation` over `LockTable`. Setting `Rec.ReadIsolation := IsolationLevel::ReadCommitted` on a record variable gives fine-grained, per-instance control over the isolation level without taking an update lock on the table for the rest of the transaction. Use `ReadCommitted` as the normal read-only choice; move to `RepeatableRead`, `Serializable`, or an update lock only when the code has a concrete consistency invariant that requires it. Use `LockTable` only for paths that genuinely write to the table.
 
 For helpers that may or may not modify records, factor the code so readers return immediately without a lock and only writers reach the LockTable call. A common pattern: attempt `Rec.Get()` first; if it returns the row, exit with the value; otherwise LockTable and proceed with the Insert. Document the pattern in a comment on the helper so callers understand why the LockTable is inside a branch.
 

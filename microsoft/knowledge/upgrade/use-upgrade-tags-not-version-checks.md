@@ -15,12 +15,12 @@ application-area: [all]
 
 ## Best Practice
 
-Guard each step with `if UpgradeTag.HasUpgradeTag(MyTag()) then exit;` at the top of the procedure. After the step completes, call `UpgradeTag.SetUpgradeTag(MyTag())`. Define the tag string in a `Tok`-suffixed Label or returning function so the same constant is referenced at both the guard and the registration (see `register-upgrade-tags-with-getpercompany-getperdatabase-subscribers`).
+Guard each standard upgrade step with `if UpgradeTag.HasUpgradeTag(MyTag()) then exit;` at the top of the procedure. After the step completes, call `UpgradeTag.SetUpgradeTag(MyTag())`. Define the tag string in a `Tok`-suffixed Label or returning function so the same constant is referenced at both the guard and the registration (see `register-upgrade-tags-with-getpercompany-getperdatabase-subscribers`). The supported DataVersion exception is first-install detection in `OnInstallAppPerCompany` with the `0.0.0.0` sentinel; one-time Hybrid migration codeunits follow separate migration patterns and should not be forced into ordinary upgrade-tag structure.
 
 See sample: `use-upgrade-tags-not-version-checks.good.al`.
 
 ## Anti Pattern
 
-`if MyApp.DataVersion().Major < 18 then UpgradeFeatureA();` — the step runs on every upgrade from a pre-18 version, may fail on partial data, and the next retry re-runs work that already succeeded. Nesting version-check branches (`< 14` → step A, `< 17` → step B) compounds the fragility.
+`if MyApp.DataVersion().Major < 18 then UpgradeFeatureA();` inside a standard upgrade step — the step runs on every upgrade from a pre-18 version, may fail on partial data, and the next retry re-runs work that already succeeded. Nesting version-check branches (`< 14` → step A, `< 17` → step B) compounds the fragility.
 
 See sample: `use-upgrade-tags-not-version-checks.bad.al`.

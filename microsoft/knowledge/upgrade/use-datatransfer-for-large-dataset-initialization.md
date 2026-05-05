@@ -11,13 +11,13 @@ application-area: [all]
 
 ## Description
 
-An upgrade that populates a new field on millions of existing rows with a FindSet+Modify loop pays a round-trip and a per-row trigger invocation for every row — turning a multi-hour upgrade into a multi-day one on ledger-entry-scale tables. `DataTransfer` pushes the update to SQL as a single set-based operation using source filters and constant values, which is the supported platform mechanism for this scenario. The tradeoff: DataTransfer bypasses validation triggers and event subscribers — if the step depends on trigger logic, that has to be reconstructed explicitly.
+An upgrade that populates a new field on existing rows with a FindSet+Modify loop pays a round-trip and a per-row trigger invocation for every row — turning a multi-hour upgrade into a multi-day one on ledger-entry-scale tables. `DataTransfer` pushes the update to SQL as a single set-based operation using source filters and constant values, which is the supported platform mechanism for this scenario. The tradeoff: DataTransfer bypasses validation triggers and event subscribers — if the step depends on trigger logic, that has to be reconstructed explicitly.
 
 ## Best Practice
 
-Use DataTransfer when initializing a new field on an existing table that **can contain more than 300,000 records**, or whenever a new field is added to an existing table and the initialization must run across all existing rows. Tables in the ledger-entry and document-line category reliably exceed this threshold; treat them as requiring DataTransfer by default.
+Use DataTransfer when a new field added to an existing table needs initialization across existing rows, and for any table that can contain more than 300,000 records. Tables in the ledger-entry and document-line category reliably exceed this threshold; treat them as requiring DataTransfer by default.
 
-Set tables, add source filters, add constant values, call CopyFields, clear, and repeat for additional slices. When trigger or subscriber behaviour is required, do that work separately against a filtered result set so the bulk update remains set-based.
+Set tables, add source filters, add constant values, call CopyFields, clear, and repeat for additional slices. Use the pattern for new fields and tables added in the same change. If no new field or table is involved, document why validation triggers and event subscribers are safe to bypass, or keep the explicit loop that invokes the business logic.
 
 See sample: `use-datatransfer-for-large-dataset-initialization.good.al`.
 

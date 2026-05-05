@@ -11,7 +11,7 @@ application-area: [all]
 
 ## Description
 
-`Session.LogMessage` accepts a DataClassification parameter that governs how the platform handles the logged content in the telemetry pipeline. Omitting it is a schema violation the platform cannot repair later. Embedding personal data — emails, names, phone numbers, addresses, filenames of user uploads — in the message string also defeats classification, because the pipeline sees opaque text and cannot selectively redact.
+`Session.LogMessage` accepts a DataClassification parameter that governs how the platform handles the logged content in the telemetry pipeline. Omitting it is a schema violation the platform cannot repair later. Embedding personal data — emails, names, phone numbers, addresses, filenames of user uploads — in the message string also defeats classification, because the pipeline sees opaque text and cannot selectively redact. The same privacy boundary applies to other telemetry surfaces such as `Codeunit "Feature Telemetry"` custom dimensions.
 
 ## Best Practice
 

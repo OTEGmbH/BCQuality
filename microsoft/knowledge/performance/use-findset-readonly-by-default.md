@@ -11,11 +11,11 @@ application-area: [all]
 
 ## Description
 
-FindSet has two modes: FindSet() and FindSet(false) are read-only and take no write lock; FindSet(true) calls LockTable before fetching. Write locks are expensive and hold for the remainder of the transaction, so passing `true` when you do not intend to modify the records increases contention under load.
+FindSet has two modes: FindSet() and FindSet(false) are read-only and take no update lock; FindSet(true) sets update-lock read isolation on the record before fetching. Update locks are expensive and hold for the lock scope, so passing `true` when you do not intend to modify the records increases contention under load.
 
 ## Best Practice
 
-Call FindSet with no arguments when the loop only reads field values. Pass `true` only when the same loop is expected to call Modify, Delete, or Rename on the record, and the correctness of the operation depends on the table being locked for the full iteration.
+Call FindSet with no arguments when the loop only reads field values. Pass `true` only when the same loop is expected to call Modify, Delete, or Rename on the record, and the correctness of the operation depends on the matching rows being locked for the iteration.
 
 See sample: `use-findset-readonly-by-default.good.al`.
 

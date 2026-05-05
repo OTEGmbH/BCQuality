@@ -12,4 +12,10 @@ codeunit 50216 "Sec Sample NonDebuggable Good"
         JObject.Get('access_token', JToken);
         SessionToken := JToken.AsValue().AsText();
     end;
+
+    [NonDebuggable]
+    procedure BuildAuthorizationHeader(ApiKey: SecretText): Text
+    begin
+        exit('Bearer ' + ApiKey.Unwrap());
+    end;
 }

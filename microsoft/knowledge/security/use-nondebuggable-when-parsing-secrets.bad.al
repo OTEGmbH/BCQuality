@@ -13,4 +13,9 @@ codeunit 50217 "Sec Sample NonDebuggable Bad"
         JObject.Get('access_token', JToken);
         SessionToken := JToken.AsValue().AsText();
     end;
+
+    procedure BuildAuthorizationHeader(ApiKey: SecretText): Text
+    begin
+        exit('Bearer ' + ApiKey.Unwrap());
+    end;
 }

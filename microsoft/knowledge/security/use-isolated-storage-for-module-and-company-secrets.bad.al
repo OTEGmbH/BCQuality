@@ -10,6 +10,7 @@ codeunit 50209 "Sec Sample IsolatedStorage Bad"
     var
         ApiKey: Text;
     begin
+        // Public wrapper: another extension can call this to read the secret.
         if IsolatedStorage.Get('ApiKey', DataScope::Module, ApiKey) then
             exit(ApiKey);
         exit('');
