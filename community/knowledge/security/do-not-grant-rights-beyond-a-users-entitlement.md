@@ -1,5 +1,5 @@
 ---
-bc-version: [26..28]
+bc-version: [all]
 domain: security
 keywords: [entitlement, permissionset, license, clipping, sandbox-drift]
 technologies: [al]
@@ -9,7 +9,7 @@ application-area: [all]
 
 # Do not grant rights beyond a user's entitlement
 
-> **Seed article.** Ported from BC Code Intelligence to seed the community corpus. Community contributors are invited to expand or refine.
+> Contributions welcome — open a PR to refine or extend this article.
 
 ## Description
 

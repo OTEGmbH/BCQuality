@@ -1,5 +1,5 @@
 ---
-bc-version: [26..28]
+bc-version: [all]
 domain: performance
 keywords: [singleinstance, subscriber, event, memory, session]
 technologies: [al]
@@ -9,7 +9,7 @@ application-area: [all]
 
 # Avoid growing globals in SingleInstance subscribers
 
-> **Seed article.** Ported from BC Code Intelligence to seed the community corpus. Community contributors are invited to expand or refine.
+> Contributions welcome — open a PR to refine or extend this article.
 
 ## Description
 

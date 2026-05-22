@@ -35,7 +35,7 @@ The agent reads `/skills/entry.md` and runs it against the task context. Entry a
 The dispatch record names one or more action skills and the subset of inputs each should receive. If the outcome is `no-match` or `failed`, the agent returns the record to the orchestrator unchanged.
 
 ### 4. Agent invokes each dispatched action skill
-Action skills live inside the layers — `/microsoft/skills/`, `/community/skills/`, `/custom/skills/` — so their authority is carried by their location. For a PR review, Entry typically dispatches `microsoft/skills/al-code-review.md`. The agent reads the file and executes it.
+Action skills live inside the layers — `/microsoft/skills/`, `/community/skills/`, `/custom/skills/` — so their authority is carried by their location. For a PR review, Entry typically dispatches `microsoft/skills/review/al-code-review.md`. The agent reads the file and executes it.
 
 ### 5. Action skill executes the four-step pattern
 
@@ -65,6 +65,17 @@ The orchestrator parses this **without skill-specific logic**. This is the point
 
 ### 7. Orchestrator integrates
 The orchestrator turns findings into PR comments, build gates, or IDE diagnostics, and links the references back to the knowledge files so the PR author — human or agent — can read the guidance.
+
+## Knowledge-backed and agent findings
+
+BCQuality is an **additive** knowledge layer. The agent surfaces two kinds of findings, both shaped to the same DO output contract:
+
+- **Knowledge-backed findings** carry one or more entries in `references[]` pointing at BCQuality knowledge files. Their `id` is the primary file's repo-relative path. These are produced by leaf sub-skills and rolled up by super-skills.
+- **Agent findings** are surfaced by a super-skill from its own self-review pass when no BCQuality knowledge file backs the concern. They are tagged with `from-sub-skill: "agent"`, carry an empty `references: []`, use a slug `id` prefixed `agent:`, and have `confidence` capped at `medium`. Their `message` is self-contained because there is no knowledge-file footer to fall back on.
+
+Before a super-skill emits an agent finding, it validates the candidate against the BCQuality knowledge already loaded for the task: a matching file upgrades the candidate to a knowledge-backed finding (and merges or deduplicates against the relevant sub-skill output); a contradicting file suppresses the candidate. Only candidates with no BCQuality coverage become agent findings.
+
+Orchestrators MAY render the two kinds differently — for example, by labelling agent findings or routing them to a separate review domain — and MAY apply independent severity floors. The `from-sub-skill: "agent"` marker is the contract.
 
 ## Why this architecture
 

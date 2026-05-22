@@ -1,8 +1,28 @@
+# ⚠️ Warning
+This project is under active development.  
+Large and potentially breaking changes are expected.
+
+**Public preview will soon be announced.**
+
 # BCQuality
 
 Quality skills and knowledge for Business Central development.
 
 BCQuality is a curated knowledge base and skills library for Business Central. It provides structured, machine-readable guidance that development agents and tools can consume — establishing a consistent quality bar across tooling and teams.
+
+## What belongs here
+
+BCQuality is a remedial knowledge base. A file exists because a capable LLM **would get something wrong, or miss something, without it** — not because the topic is important. The admission test for a knowledge file is one question:
+
+> If this file did not exist, would a modern LLM reviewing or generating BC code make a mistake this file would have prevented?
+
+If the answer is no — the advice is generic software-engineering guidance, or the LLM already knows the BC mechanic in question — the file does not belong here, regardless of how sound the content is. A file earns its place by encoding something BC-specific that LLMs demonstrably get wrong: a CodeCop rule number, a platform API whose semantics the training data gets backwards, a non-obvious ordering rule, a BC property whose default is a footgun.
+
+Good fit: "`SetLoadFields` must be called before filters, not after" (non-obvious ordering rule). "`FindSet(true)` takes a LockTable and the two-parameter signature is obsolete" (subtle platform behaviour + outdated training data). "CodeCop AA0233 flags `FindFirst … Next` loops" (rule-specific).
+
+Poor fit: "Use HTTPS instead of HTTP." "Don't hardcode secrets." "Keep transactions short." These are true but any capable LLM already applies them without prompting.
+
+The practical consequence: when a code-review agent flags something it shouldn't have, or misses something it should have caught, the remedy is a new knowledge file. When it already behaves correctly on a topic, no file is needed.
 
 ## What's in this repo
 
@@ -38,7 +58,7 @@ Skills define how agents consume knowledge. They come in three flavors:
 
   READ and DO are read on demand — typically when the first dispatched action skill runs. They are not prerequisites for invoking Entry. WRITE is only used when scaffolding new content.
 
-- **Action skills** — concrete skills that follow the Action Skill template to do real work (review code, audit telemetry, etc.). Action skills live inside the layers that own them (`/microsoft/skills/`, `/community/skills/`, `/custom/skills/`). An action skill is either a **leaf** that evaluates knowledge files directly, or a **super-skill** that composes other action skills (declared via `sub-skills` in frontmatter). The canonical reference is [`microsoft/skills/al-code-review.md`](microsoft/skills/al-code-review.md) (super-skill), which composes [`microsoft/skills/al-performance-review.md`](microsoft/skills/al-performance-review.md) and [`microsoft/skills/al-security-review.md`](microsoft/skills/al-security-review.md) (leaves).
+- **Action skills** — concrete skills that follow the Action Skill template to do real work (review code, audit telemetry, etc.). Action skills live inside the layers that own them (`/microsoft/skills/`, `/community/skills/`, `/custom/skills/`). An action skill is either a **leaf** that evaluates knowledge files directly, or a **super-skill** that composes other action skills (declared via `sub-skills` in frontmatter). The canonical reference is [`microsoft/skills/review/al-code-review.md`](microsoft/skills/review/al-code-review.md) (super-skill), which composes six leaf skills under [`microsoft/skills/review/`](microsoft/skills/review/) — one per knowledge domain (performance, security, privacy, upgrade, style, UI).
 
 ### Agent bootstrapping
 
@@ -52,7 +72,7 @@ Every knowledge file is a markdown file with mandatory YAML frontmatter. Files t
 
 ```yaml
 ---
-bc-version: [26..28]                   # BC versions this applies to
+bc-version: [all]                       # or [26..28] for version-gated guidance
 domain: performance                     # security | performance | ux | telemetry | ...
 keywords: [query, filtering, partial]   # free-text tags for retrieval
 technologies: [al]                      # al | javascript | powershell | ...
@@ -97,6 +117,8 @@ Action skills follow a four-step pattern:
 4. **Action** — apply the relevant knowledge and produce structured output
 
 Every action skill produces output in a common format that orchestrators can consume without skill-specific parsing. The format is JSON and includes an `outcome` (so a clean run, a not-applicable skill, and a partial failure are all distinguishable), `findings` (what the skill observed), structured `references` back to the knowledge files that informed each finding, per-finding `confidence`, and a `suppressed` list recording any knowledge files overridden by layer precedence. This contract is defined in the Action Skill meta-skill so that orchestrators and action skills remain independently evolvable.
+
+BCQuality is an **additive** knowledge layer: it augments the agent's review judgement, it does not replace it. Super-skills (such as `al-code-review`) run a self-review pass alongside their sub-skills and surface concerns the agent identified on its own, marked with `from-sub-skill: "agent"` and an empty `references: []` so consumers can render them distinctly from knowledge-backed findings. See [agent-consumption.md](agent-consumption.md) and [`skills/do.md`](skills/do.md) for the full contract.
 
 The meta-skills in `/skills/` define this pattern. Every concrete action skill follows it.
 
