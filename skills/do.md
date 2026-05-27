@@ -94,7 +94,8 @@ Every action skill emits a single JSON document that conforms to this schema:
         { "path": "string", "sha": "string" }
       ],
       "confidence": "high | medium | low",
-      "from-sub-skill": "string"
+      "from-sub-skill": "string",
+      "suggested-code": "string"
     }
   ],
   "suppressed": [
@@ -167,6 +168,8 @@ The first reference is the **primary** reference: the knowledge file the finding
 **`findings[].confidence`** — the skill's confidence that the finding is a true positive, given the evidence it evaluated. Not applicability confidence, not severity confidence. Values: `high`, `medium`, `low`.
 
 **`findings[].from-sub-skill`** — optional. Set only by super-skills. The `skill.id` of the sub-skill that produced the finding, or the literal string `"agent"` for an agent finding the super-skill produced from its own reasoning. Absent on findings produced directly by a leaf skill.
+
+**`findings[].suggested-code`** — optional. A concrete code-replacement payload for the lines indicated by `location`. When present, the string MUST be a literal replacement for the source lines covered by `location.line` (or `location.range` if set) — i.e., what the file would contain after the fix, with no surrounding diff markers, fences, or commentary. Consumers MAY render it as a one-click suggestion in the delivery surface (for example, a GitHub ```` ```suggestion ```` block). Emit `suggested-code` only when the fix is small, mechanical, and unambiguous; omit it when the appropriate fix depends on context the skill cannot determine. The `suggested-code` payload supplements `message`; it does not replace the explanation in `message`.
 
 **`suppressed`** — MUST list every knowledge file that was discarded due to layer precedence or consumer configuration, whenever that file would otherwise have contributed to the worklist. Each entry contains:
 

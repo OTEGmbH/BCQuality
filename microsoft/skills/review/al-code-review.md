@@ -85,8 +85,15 @@ For every candidate the agent identifies in this pass:
    - `id` is a skill-defined slug prefixed with `agent:` (for example, `agent:missing-error-handling-on-http-call`).
    - `confidence` capped at `medium`.
    - `message` is non-empty and self-contained, describing both the issue and a concrete recommendation. A consumer rendering the finding has no knowledge-file footer to fall back on.
+   - `suggested-code` SHOULD be set when the fix is small and mechanical (e.g. removing a few unreachable lines, replacing a `Count() > 0` test with `not IsEmpty()`, declaring a missing `Label`). Omit it when the appropriate fix depends on context the agent cannot determine.
 
 Leaf sub-skills MUST NOT emit agent findings: their scope is bounded by the knowledge subset they evaluate. The self-review pass is a super-skill responsibility.
+
+### Suggested-code guidance
+
+For both knowledge-backed findings rolled up from sub-skills and agent findings emitted in the self-review pass, populate `findings[].suggested-code` whenever a concrete code replacement is unambiguous from the diff context. The payload MUST be a literal replacement for the source lines covered by `location` (typically a single line, or the line range in `location.range`) — no diff markers, fences, or commentary. Examples of good candidates: deleting dead code after `exit`, replacing `Count() > 0` with `not IsEmpty()`, moving an inline `Label` declaration to a codeunit-level `var` block, fixing whitespace or keyword casing. Skip `suggested-code` when the fix requires choosing between multiple defensible alternatives or when the surrounding context the agent cannot see could change the answer.
+
+Sub-skills MAY also emit `suggested-code` when their knowledge file unambiguously implies the replacement (the `.good.al` and `.bad.al` companion examples are useful here). The super-skill copies the field through unchanged.
 
 ### Summary and rollup
 
